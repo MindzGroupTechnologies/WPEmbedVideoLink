@@ -1,0 +1,48 @@
+.evl {
+    @import (less) 'bootstrap.css';
+    .vid_message,
+    .vid_title {
+        font-size: .85em
+    }
+    .vid_message {
+        margin-bottom: 8px;
+    }
+    .vid_title {
+        a {
+            border: none;
+            font-style: normal;
+            color: #009688;
+        }
+    }
+    .vid_channel,
+    .vid_statistics,
+    .vid_source,
+    .vid_description,
+    .vid_info {
+        font-style: normal;
+        font-size: .75em;
+        strong {
+            font-weight: normal;
+            color: #ccc;
+        }
+    }
+    .vid_description {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+    }
+    .row {
+        padding-top: 8px;
+        padding-bottom: 8px;
+    }
+    span {
+        &.promote {
+            font-size: .6em;
+            a {
+                color: #009688;
+                border: none;
+                text-decoration: none;
+            }
+        }
+    }
+}
