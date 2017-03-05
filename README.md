@@ -14,7 +14,7 @@ You are required to generate an API Key from Google Developer Console for YouTub
 
 ### Installation
 1. **Get Latest Release**  
-From the releases tab download the latest release binary.
+From the releases tab download the [latest][latest] release binary.
 2. **Install**
    * Login to WordPress Administration
    * Navigate to Plugins > Add New
@@ -45,3 +45,4 @@ That's it! you are done. Your posts will now show a SEO optemized beautifully re
 In case you are finding any issues, please let me know by creating a issue here in GitHub.
 
 [sample]: https://www.mindzgrouptech.net/wp-content/uploads/2017/03/evl_sample.png
+[latest]: https://github.com/MindzGroupTechnologies/WPEmbedVideoLink/releases/latest
