@@ -2,7 +2,59 @@
 class VideoLink {
     public function __construct () {
         add_shortcode( 'evl', array( $this, 'evl_process_shortcode' ) ); 
+        add_action( 'admin_menu', array( $this, 'evl_create_menu_item' ) );
+        add_action( 'admin_init', array( $this, 'evl_init_config' ) );
+
+        $plugin = plugin_basename( EVL_PLUGIN_FILE );
+        add_filter( "plugin_action_links_$plugin", array($this, 'plugin_add_settings_link' ) );
+
         $this->evl_register_styles();
+    }
+
+    public function plugin_add_settings_link( $links ) {
+        $settings_link = '<a href="admin.php?page=evl-config">' . __( 'Settings' ) . '</a>';
+        array_unshift( $links, $settings_link );
+        return $links;
+    }
+
+    public function evl_init_config() {
+        register_setting('evl_config', 'evl_config_api_key');
+    }
+
+    public function evl_create_menu_item() {
+        add_menu_page( 'Embed Video Link Config', 'Video Link', 'administrator', 'evl-config', array ($this, 'options_page' ), 'dashicons-video-alt3', 20 );
+    }
+
+    public function options_page() {?>
+        <div class="evl">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="col-xs-offset-2 col-xs-10">
+                            <h2>Embed Video Link Configurations</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <form class="form-horizontal" action="options.php" method="post">
+                            <?php settings_fields( 'evl_config' )?>
+                            <?php do_settings_sections( 'evl_config' )?>
+                            <div class="form-group">
+                                <label for="evl_config_api_key" class="control-label col-xs-2">Google API Key</label>
+                                <div class="col-xs-10">
+                                    <input type="text" class="form-control" id="evl_config_api_key" name="evl_config_api_key" value="<?php echo get_option( "evl_config_api_key", "" ) ?>" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-offset-2 col-xs-10">
+                                    <?php submit_button()?>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php
     }
 
     public function evl_register_styles() {
@@ -15,9 +67,16 @@ class VideoLink {
             'vid' => '',
             'promote' => 'false'
         ), $attributes ) );
+        $key = get_option( "evl_config_api_key", "" );
 
-        $video_url = 'https://www.googleapis.com/youtube/v3/videos?id='.$vid.'&part=id,contentDetails,statistics,topicDetails,snippet&key=AIzaSyA4U-UBM4A2Ht9LinXEEZHPC0SSwQnSBZQ';
+        if(empty($key)) {
+            return "";
+        }
+
+        $video_url = 'https://www.googleapis.com/youtube/v3/videos?id='.$vid.'&part=id,contentDetails,statistics,topicDetails,snippet&key='.$key;
+
         $vid_info = $this->evl_getVideoInfo($video_url);    
+
         return 
             '<blockquote class="evl">
                 <div class="row">
