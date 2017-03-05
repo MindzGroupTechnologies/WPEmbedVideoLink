@@ -65,7 +65,7 @@ class VideoLink {
     public function evl_process_shortcode( $attributes, $content = null ) {
         extract( shortcode_atts( array(
             'vid' => '',
-            'promote' => 'false'
+            'promote' => 'true'
         ), $attributes ) );
         $key = get_option( "evl_config_api_key", "" );
 
