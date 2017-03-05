@@ -29,7 +29,7 @@ module.exports = function (grunt) {
             prod: {
                 files: [{
                         expand: true,
-                        src: ['videolink.php'],
+                        src: ['videolink.php', 'plugin.php'],
                         dest: 'evl/',
                         filter: 'isFile'
                     },
