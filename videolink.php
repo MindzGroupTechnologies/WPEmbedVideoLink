@@ -1,30 +1,44 @@
 <?php
 class VideoLink {
     public function __construct () {
+        // register shortcode
         add_shortcode( 'evl', array( $this, 'evl_process_shortcode' ) ); 
+
+        // add frontend styles
+        add_action( 'wp_enqueue_scripts', array( $this, 'evl_register_styles' ) );
+        
+        // add admin styles
+        add_action( 'admin_enqueue_scripts', array($this, 'evl_register_styles_admin') );
+
+        // create admin menu item
         add_action( 'admin_menu', array( $this, 'evl_create_menu_item' ) );
+
+        // initialize configurations
         add_action( 'admin_init', array( $this, 'evl_init_config' ) );
 
+        // add plugin settings link in the insttalled plugin list 
         $plugin = plugin_basename( EVL_PLUGIN_FILE );
-        add_filter( "plugin_action_links_$plugin", array($this, 'plugin_add_settings_link' ) );
-
-        $this->evl_register_styles();
+        add_filter( "plugin_action_links_$plugin", array( $this, 'plugin_add_settings_link' ) );
     }
 
+    // function to add the settings link in the installed plugin list for this plugin 
     public function plugin_add_settings_link( $links ) {
         $settings_link = '<a href="admin.php?page=evl-config">' . __( 'Settings' ) . '</a>';
         array_unshift( $links, $settings_link );
         return $links;
     }
 
+    // function to set the initial configuration
     public function evl_init_config() {
         register_setting('evl_config', 'evl_config_api_key');
     }
 
+    // function to create a menu item
     public function evl_create_menu_item() {
         add_menu_page( 'Embed Video Link Config', 'Video Link', 'administrator', 'evl-config', array ($this, 'options_page' ), 'dashicons-video-alt3', 20 );
     }
 
+    // function to return the configuration page
     public function options_page() {?>
         <div class="evl">
             <div class="container-fluid">
@@ -57,11 +71,22 @@ class VideoLink {
     <?php
     }
 
+    // function to register styles
     public function evl_register_styles() {
         wp_register_style( 'evl', plugins_url( '/assets/css/main.min.css', __FILE__ ) );
         wp_enqueue_style( 'evl' );
     }
 
+    // function to register admin styles
+    public function evl_register_styles_admin($hook) {
+        // Load only on ?page=evl-config
+        if($hook != 'toplevel_page_evl-config') {
+            return;
+        }
+        $this->evl_register_styles();
+    }
+
+    // function to render shortcode
     public function evl_process_shortcode( $attributes, $content = null ) {
         extract( shortcode_atts( array(
             'vid' => '',
@@ -116,6 +141,7 @@ class VideoLink {
             '</blockquote>';
     }
 
+    // function to retrive the YouTube video information
     public function evl_getVideoInfo($evl_url) {
         // the video info
         $videos_result = wp_remote_get( $evl_url );
@@ -133,6 +159,7 @@ class VideoLink {
         return $json;
     }
 
+    // function to parse the goolge api duration format
     public function evl_parseDuration($duration) {
         $match = array();
         preg_match("/PT(\d+H)?(\d+M)?(\d+S)?/i", $duration, $match);
