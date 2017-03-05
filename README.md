@@ -36,13 +36,12 @@ Here `vid` attribute contains the id extracted from the YouTube video url, for e
 
 That's it! you are done. Your posts will now show a SEO optemized beautifully rendered YouTube video links.
 
+### Planned Features
 - [ ] Add support for Playlist Links
 - [ ] Add link for the channel
 - [ ] Themes and color customizations
 - [ ] options to select which all information to be rendered related to video.
 
 In case you are finding any issues, please let me know by creating a issue here in GitHub.
-
-### Planned Features
 
 [sample]: https://www.mindzgrouptech.net/wp-content/uploads/2017/03/evl_sample.png
