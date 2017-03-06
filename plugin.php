@@ -3,7 +3,7 @@
  * Plugin Name: MindzGroupTech - Embed Video Link
  * Plugin URI: https://www.mindzgrouptech.net/wordpress-plugin-embed-video-link
  * Description: A plugin that renders / embeds YouTube link in posts with just a shortcode.
- * Version: 0.0.3
+ * Version: 0.0.4
  * Author: MindzGroupTech
  * Author URI: https://www.mindzgrouptech.net
  */
