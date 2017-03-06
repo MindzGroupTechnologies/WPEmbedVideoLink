@@ -1,6 +1,6 @@
 {
   "name": "embbed-video-link",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A WordPress plugin to show the link to YouTube video (Thumbnail and Details).",
   "main": "index.js",
   "scripts": {

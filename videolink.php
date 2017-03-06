@@ -23,8 +23,17 @@ class VideoLink {
 
     // function to add the settings link in the installed plugin list for this plugin 
     public function plugin_add_settings_link( $links ) {
+        // build the settings link
         $settings_link = '<a href="admin.php?page=evl-config">' . __( 'Settings' ) . '</a>';
         array_unshift( $links, $settings_link );
+
+        // build update available link
+        $pluginInfo = get_plugin_data( EVL_PLUGIN_FILE );
+        
+        if($this->checkForUpdate($pluginInfo['Version'])){
+            $settings_link = '<a target="_blank" style="color: orange;" href="https://github.com/MindzGroupTechnologies/WPEmbedVideoLink/releases/latest">' . __( 'Updates' ) . ' ' . __( 'Available' ). '</a>';
+            array_push( $links, $settings_link );
+        }
         return $links;
     }
 
@@ -146,9 +155,6 @@ class VideoLink {
         // the video info
         $videos_result = wp_remote_get( $evl_url );
         
-        // 
-        $json = json_decode($videos_result['body']);
-        
         $response_code = wp_remote_retrieve_response_code( $videos_result );
         $response_message = wp_remote_retrieve_response_message( $videos_result );
 
@@ -156,7 +162,33 @@ class VideoLink {
             return null;
         }
 
+        if( is_array($videos_result) ) {
+            $json = json_decode($videos_result['body']);
+        }
+        
         return $json;
+    }
+
+    public function checkForUpdate($current) {
+        $response = wp_remote_get( esc_url_raw( 'https://api.github.com/repos/MindzGroupTechnologies/WPEmbedVideoLink/releases') );
+
+        $response_code = wp_remote_retrieve_response_code( $response );
+        $response_message = wp_remote_retrieve_response_message( $response );
+        
+        if ( $response_code != 200 ) {
+            return false;
+        }
+
+        if( is_array($response) ) {
+            $body = wp_remote_retrieve_body($response);
+            $releases = json_decode($body);
+            if(is_array($releases)) {
+                $latest = $releases[0]->tag_name;
+                return version_compare($current, $latest, '<');
+            } else {
+                return false;
+            }
+        }
     }
 
     // function to parse the goolge api duration format
