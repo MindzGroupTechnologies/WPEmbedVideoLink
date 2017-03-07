@@ -39,32 +39,51 @@ class VideoLink {
 
     // function to set the initial configuration
     public function evl_init_config() {
-        register_setting('evl_config', 'evl_config_api_key');
+        // migrate v0.0.4 configs
+        $old_config_0_0_4 = get_option('evl_config_api_key');
+        if(!empty($old_config_0_0_4)){
+            register_setting('evl_config_youtube', 'evl_youtube_api_key' );
+            add_option( 'evl_youtube_api_key', $old_config_0_0_4 );
+            delete_option( 'evl_config_api_key' );
+        }
+        else {
+            register_setting('evl_config_youtube', 'evl_youtube_api_key' );
+        }
+        register_setting('evl_config_vimeo', 'evl_vimeo_client_id' );
+        register_setting('evl_config_vimeo', 'evl_vimeo_client_secret' );
     }
 
     // function to create a menu item
     public function evl_create_menu_item() {
-        add_menu_page( 'Embed Video Link Config', 'Video Link', 'administrator', 'evl-config', array ($this, 'options_page' ), 'dashicons-video-alt3', 20 );
+        add_menu_page( 'Embed Video Link Config', 'Video Link', 'manage_options', 'evl-config', array ($this, 'about_page' ), 'dashicons-video-alt3', 20 );
+        add_submenu_page( 'evl-config', 'About', 'About', 'manage_options', 'evl-config', array($this, 'about_page') );
+        add_submenu_page( 'evl-config', 'EVL YouTube Configuration', 'YouTube Videos', 'manage_options', 'evl-youtube-config', array($this, 'youtube_options_page') );
+        add_submenu_page( 'evl-config', 'EVL Vimeo Configuration', 'Vimeo Videos', 'manage_options', 'evl-vimeo-config', array($this, 'vimeo_options_page') );
+    }
+    // function to return the configuration page
+    public function about_page() {?>
+        hello
+    <?php
     }
 
-    // function to return the configuration page
-    public function options_page() {?>
+    // function to return the configuration page for youtube
+    public function youtube_options_page() {?>
         <div class="evl">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <div class="col-xs-offset-2 col-xs-10">
-                            <h2>Embed Video Link Configurations</h2>
+                            <h2>EVL YouTube Configurations</h2>
                         </div>
                     </div>
                     <div class="col-md-12 col-sm-12 col-xs-12">
                         <form class="form-horizontal" action="options.php" method="post">
-                            <?php settings_fields( 'evl_config' )?>
-                            <?php do_settings_sections( 'evl_config' )?>
+                            <?php settings_fields( 'evl_config_youtube' )?>
+                            <?php do_settings_sections( 'evl_config_youtube' )?>
                             <div class="form-group">
-                                <label for="evl_config_api_key" class="control-label col-xs-2">Google API Key</label>
+                                <label for="evl_youtube_api_key" class="control-label col-xs-2">Google API Key</label>
                                 <div class="col-xs-10">
-                                    <input type="text" class="form-control" id="evl_config_api_key" name="evl_config_api_key" value="<?php echo get_option( "evl_config_api_key", "" ) ?>" />
+                                    <input type="text" class="form-control" id="evl_youtube_api_key" name="evl_youtube_api_key" value="<?php echo get_option( "evl_youtube_api_key", "" ) ?>" />
                                 </div>
                             </div>
                             <div class="form-group">
@@ -80,6 +99,60 @@ class VideoLink {
     <?php
     }
 
+    // function to return the configuration page for vimeo
+    public function vimeo_options_page() {?>
+        <div class="evl">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <div class="col-xs-offset-2 col-xs-10">
+                            <h2>EVL Vimeo Configurations</h2>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-xs-12">
+                        <form class="form-horizontal" action="options.php" method="post">
+                            <?php settings_fields( 'evl_config_vimeo' )?>
+                            <?php do_settings_sections( 'evl_config_vimeo' )?>
+                            <div class="form-group">
+                                <label for="evl_vimeo_client_id" class="control-label col-xs-2">Client ID</label>
+                                <div class="col-xs-10">
+                                    <input type="text" class="form-control" id="evl_vimeo_client_id" name="evl_vimeo_client_id" value="<?php echo get_option( "evl_vimeo_client_id", "" ) ?>" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="evl_vimeo_client_secret" class="control-label col-xs-2">Cliend Secret</label>
+                                <div class="col-xs-10">
+                                    <input type="text" class="form-control" id="evl_vimeo_client_secret" name="evl_vimeo_client_secret" value="<?php echo get_option( "evl_vimeo_client_secret", "" ) ?>" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-2">Access Token</label>
+                                <div class="col-xs-10">
+                                    <input class="form-control" readonly value="<?php echo ($this->hasVimeoAccessToken()?'Please provide valid Vimeo App Credential':'You have a access token') ?>" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-xs-offset-2 col-xs-10">
+                                    <?php submit_button()?>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php
+    }
+
+    //function for get vimeo access token
+    public function hasVimeoAccessToken()
+    {
+        // $client_id = get_option( 'evl_vimeo_client_id', null );
+        // $client_secret = get_option( 'evl_vimeo_client_secret', null );
+        // if()
+        return true;
+    }
+
     // function to register styles
     public function evl_register_styles() {
         wp_register_style( 'evl', plugins_url( '/assets/css/main.min.css', __FILE__ ) );
@@ -88,8 +161,12 @@ class VideoLink {
 
     // function to register admin styles
     public function evl_register_styles_admin($hook) {
-        // Load only on ?page=evl-config
-        if($hook != 'toplevel_page_evl-config') {
+        // Load only on ?page=evl-youtube-config
+        $option_pages = array(
+            'video-link_page_evl-youtube-config', 
+            'toplevel_page_evl-config',
+            'video-link_page_evl-vimeo-config');
+        if( !in_array( $hook, $option_pages ) ) {
             return;
         }
         $this->evl_register_styles();
@@ -99,55 +176,24 @@ class VideoLink {
     public function evl_process_shortcode( $attributes, $content = null ) {
         extract( shortcode_atts( array(
             'vid' => '',
+            'plug' => 'YouTube',
             'promote' => 'true'
         ), $attributes ) );
-        $key = get_option( "evl_config_api_key", "" );
-
-        if(empty($key)) {
-            return "";
+        
+        if(empty($plug)) {
+            return EVL_Utilities::getError('IVL_PLG'); 
         }
 
-        $video_url = 'https://www.googleapis.com/youtube/v3/videos?id='.$vid.'&part=id,contentDetails,statistics,topicDetails,snippet&key='.$key;
-
-        $vid_info = $this->evl_getVideoInfo($video_url);    
-
-        return 
-            '<blockquote class="evl">
-                <div class="row">
-                    <div class="col-md-12 vid_message">'.$content.'</div>
-                    <div class="col-md-5 col-sm-5">
-                        <a target="_blank" href="https://www.youtube.com/watch?v='.$vid.'">
-                            <img src="https://i.ytimg.com/vi/'.$vid.'/maxresdefault.jpg"/>
-                        </a>
-                    </div>
-                    <div class="col-md-7 col-sm-7">
-                        <div class="row">
-                            <div class="col-md-12 vid_title">
-                                <a target="_blank" href="https://www.youtube.com/watch?v='.$vid.'">'.$vid_info->items[0]->snippet->title.'</a>
-                            </div>
-                            <div class="col-md-12 vid_description">
-                                description: <strong>'.$vid_info->items[0]->snippet->description.'</strong>
-                            </div>
-                            <div class="col-md-12 vid_info">
-                                duration: <strong>'.$this->evl_parseDuration($vid_info->items[0]->contentDetails->duration).'</strong>
-                            </div>
-                            <div class="col-md-12 vid_statistics">
-                                views: <strong>'.$vid_info->items[0]->statistics->viewCount.'</strong>
-                            </div>
-                            <div class="col-md-12 vid_channel">
-                                by: <strong>'.$vid_info->items[0]->snippet->channelTitle.'</strong>
-                            </div>
-                            <div class="col-md-12 vid_source">
-                                source: <strong>YouTube</strong>
-                            </div>
-                        </div>
-                    </div>
-                </div>'
-                .($promote=='true'?
-                '<span class="promote">
-                    Get this plugin <a href="https://www.mindzgrouptech.net/wordpress-plugin-embed-video-link">here</a>.
-                </span>':'').
-            '</blockquote>';
+        switch ($plug) {
+            case 'YouTube':
+                $youtube_plugin = new EVL_YouTube_Plugin($vid, $content);
+                return $youtube_plugin->render();
+                break;            
+            default:
+                echo "this is it";
+                return EVL_Utilities::getError('IVL_PLG');
+                break;
+        }
     }
 
     // function to retrive the YouTube video information
@@ -189,17 +235,5 @@ class VideoLink {
                 return false;
             }
         }
-    }
-
-    // function to parse the goolge api duration format
-    public function evl_parseDuration($duration) {
-        $match = array();
-        preg_match("/PT(\d+H)?(\d+M)?(\d+S)?/i", $duration, $match);
-
-        $hours = (int)($match[1]);
-        $minutes = (int)($match[2]);
-        $seconds = (int)($match[3]);
-
-        return ($hours!=0?$hours.' hours ':'').($minutes!=0?$minutes.' minutes ':'').($seconds!=0?$seconds.' seconds':'');
     }
 }
