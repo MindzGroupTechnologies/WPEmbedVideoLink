@@ -29,7 +29,18 @@ module.exports = function (grunt) {
             prod: {
                 files: [{
                         expand: true,
-                        src: ['plugin_base.php', 'plugin.php', 'utilities.php', 'videolink.php', 'youtube.php'],
+                        src: [
+                            'options_about.php',
+                            'options_vimeo.php',
+                            'options_youtube.php',
+                            'plugin_base.php',
+                            'plugin.php',
+                            'render_youtube.php',
+                            'utilities.php',
+                            'videolink.php',
+                            'videolinkadmin.php',
+                            'youtube.php'
+                        ],
                         dest: 'evl/',
                         filter: 'isFile'
                     },
