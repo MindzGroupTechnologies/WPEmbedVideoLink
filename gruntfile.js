@@ -30,16 +30,7 @@ module.exports = function (grunt) {
                 files: [{
                         expand: true,
                         src: [
-                            'options_about.php',
-                            'options_vimeo.php',
-                            'options_youtube.php',
-                            'plugin_base.php',
-                            'plugin.php',
-                            'render_youtube.php',
-                            'utilities.php',
-                            'videolink.php',
-                            'videolinkadmin.php',
-                            'youtube.php'
+                            '*.php'
                         ],
                         dest: 'evl/',
                         filter: 'isFile'
@@ -48,6 +39,13 @@ module.exports = function (grunt) {
                         expand: true,
                         cwd: 'assets/',
                         src: ['fonts/**'],
+                        dest: 'evl/assets/',
+                        filter: 'isFile'
+                    },
+                    {
+                        expand: true,
+                        cwd: 'assets/',
+                        src: ['imgs/**'],
                         dest: 'evl/assets/',
                         filter: 'isFile'
                     }

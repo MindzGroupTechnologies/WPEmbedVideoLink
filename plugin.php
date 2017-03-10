@@ -13,6 +13,7 @@ define('EVL_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
 require EVL_PLUGIN_PATH.'plugin_base.php';
 require EVL_PLUGIN_PATH.'youtube.php';
+require EVL_PLUGIN_PATH.'vimeo.php';
 require EVL_PLUGIN_PATH.'utilities.php';
 if(is_blog_admin()) {
     require EVL_PLUGIN_PATH.'videolinkadmin.php';

@@ -19,7 +19,7 @@ class EVL_YouTube_Plugin extends EVL_Plugin_Base {
         $minutes = (int)($match[2]);
         $seconds = (int)($match[3]);
 
-        return ($hours!=0?$hours.':':'').($minutes!=0?$minutes.':':'').($seconds!=0?$seconds.'':'');
+        return sprintf('%02d:%02d:%02d', $hours,$minutes,$seconds);//($hours!=0?$hours.':':'').($minutes!=0?$minutes.':':'').($seconds!=0?$seconds.'':'');
     }
 
     public function render() {

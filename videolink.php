@@ -33,6 +33,10 @@ class EVL_Front {
                 $youtube_plugin = new EVL_YouTube_Plugin($attrs['vid'], $content);
                 return $youtube_plugin->render();
                 break;            
+            case 'Vimeo':
+                $vimeo_plugin = new EVL_Vimeo_Plugin($attrs['vid'], $content);
+                return $vimeo_plugin->render();
+                break;            
             default:
                 echo "this is it";
                 return EVL_Utilities::getError('IVL_PLG');

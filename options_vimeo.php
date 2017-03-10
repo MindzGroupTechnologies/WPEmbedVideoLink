@@ -25,7 +25,7 @@
                             <div class="form-group">
                                 <label class="control-label col-xs-2">Access Token</label>
                                 <div class="col-xs-10">
-                                    <input class="form-control" readonly value="<?php echo ($this->hasVimeoAccessToken()?'You have a access token':'Please provide valid Vimeo App Credential') ?>" />
+                                    <input class="form-control" readonly value="<?php echo ($this->hasVimeoAccessToken()?'You have got access token':'Please provide valid Vimeo App Credential') ?>" />
                                 </div>
                             </div>
                             <div class="form-group">

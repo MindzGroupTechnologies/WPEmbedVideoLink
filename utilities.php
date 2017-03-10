@@ -36,23 +36,34 @@ class EVL_Utilities {
         }
     }
 
-    public static function getURLData($evl_url, $parse_json=true) {
+    public static function getURLData($evl_url, $attr = null, $parse_json=true) {
         // request the content from remote
-        $videos_result = wp_remote_get( $evl_url );
-        
-        // get the response code and message
-        $response_code = wp_remote_retrieve_response_code( $videos_result );
-        $response_message = wp_remote_retrieve_response_message( $videos_result );
+        $responseData = wp_remote_get( $evl_url, $attr );
+        //var_dump($responseData);
+        return self::processHttpResponse($responseData);
+    }
 
+    public static function postURLData($evl_url, $attr = null, $parse_json=true) {
+        // request the content from remote
+        $responseData = wp_remote_post( $evl_url, $attr );
+        
+        return self::processHttpResponse($responseData);
+    }
+
+    private static function processHttpResponse($responseData, $parse_json = true){
+        // get the response code and message
+        $response_code = wp_remote_retrieve_response_code( $responseData );
+        $response_message = wp_remote_retrieve_response_message( $responseData );
+        
         // check if the request was successful
         if ( $response_code != 200 ) {
             return null;
         }
 
         // check if the response contains results
-        if( is_array($videos_result) ) {
+        if( is_array($responseData) ) {
             // get the response body
-            $body = wp_remote_retrieve_body( $videos_result );
+            $body = wp_remote_retrieve_body( $responseData );
             
             // parse and return the object from json if requested
             if($parse_json) {
